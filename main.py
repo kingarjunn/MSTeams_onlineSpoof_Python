@@ -6,7 +6,6 @@ import ctypes
 import pygetwindow as gw
 import datetime
 from Utils import app1
-from sympy import false
 
 osystem = str(platform.system())
 apps='\AppData\Local\Microsoft\WindowsApps'

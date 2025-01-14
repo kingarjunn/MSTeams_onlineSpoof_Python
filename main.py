@@ -6,26 +6,25 @@ import ctypes
 import pygetwindow as gw
 import datetime
 from Utils import app1
+import psutil
 
 osystem = str(platform.system())
-apps='\AppData\Local\Microsoft\WindowsApps'
+apps = '\AppData\Local\Microsoft\WindowsApps'
 app = "ms-teams.exe"
 flag = True
-s1=False
-process=""
+s1 = False
+process = ""
 
-def getsleep():
-    return s1
-def setsleep():
-    s1=True
 
 def off_sleep():
     ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
     print("Turning off sleep in computer temporarily")
 
+
 def on_sleep():
     ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
     print("Setting computer to normal sleep state")
+
 
 def run_command(command):
     # Run the PowerShell command
@@ -35,16 +34,16 @@ def run_command(command):
     stdout, stderr = process.communicate()
 
     if process.returncode != 0:
-        #print("Output:\n", stdout.decode())
+        # print("Output:\n", stdout.decode())
         os.system(os.getenv("USERPROFILE") + apps + "\\" + app)
     return 0
 
+
 def getTeamsWindow():
-    print("Getting Teams INFO...")
     time.sleep(10)
-    b=True
-    count =0
-    while b==True:
+    b = True
+    count = 0
+    while b == True:
         if count > 10:
             b = False
             app1("Please Manually open the teams and restart the script")
@@ -56,14 +55,20 @@ def getTeamsWindow():
             return win
         except:
             pass
-        count=count+1
+        count = count + 1
+
 
 def Activate(window):
-    while flag == True:
-        window.maximize()
-        time.sleep(10)
-        window.minimize()
-        time.sleep(5)
+    try:
+        for i in range(10):
+            window.maximize()
+            time.sleep(20)
+            window.minimize()
+            time.sleep(10)
+    except Exception as ex:
+        print(str(ex))
+    return 0
+
 
 
 def run():
@@ -71,22 +76,31 @@ def run():
         print("Windows Found...")
         off_sleep()
         _user = os.getenv("USERPROFILE")
-        applist=os.listdir(_user+apps)
+        applist = os.listdir(_user + apps)
         if applist.__contains__(app):
             print('Teams Found')
-            #run_command(f"Set-Location($ENV:USERPROFILE + {apps})")
-            process=run_command(f"start {app}")
-            #time.sleep(10)
-            #window = gw.getWindowsWithTitle("Microsoft Teams")[0]
-            Window = getTeamsWindow()
-            Activate(Window)
+            # run_command(f"Set-Location($ENV:USERPROFILE + {apps})")
+            # process=run_command(f"start {app}")
+            # time.sleep(10)
+            # window = gw.getWindowsWithTitle("Microsoft Teams")[0]
+            print("Getting Teams INFO...\n process as Started Sit back and relax")
+            while True:
+                process = run_command(f"start {app}")
+                Window = getTeamsWindow()
+                aa = Activate(Window)
+                for process in psutil.process_iter(['pid', 'name']):
+                    if "ms-teams.exe" in process.info['name']:
+                        print(process.info['name'])
+                        psutil.Process(process.info['pid']).terminate()
 
         else:
             app1("Please install the Teams")
             print("please install the team and then try")
-            #pass
-        #run_command("Set-Location($ENV:USERPROFILE + '\AppData\Local\Microsoft\WindowsApps')")"""
-        #run_command(app)
+            # pass
+        # run_command("Set-Location($ENV:USERPROFILE + '\AppData\Local\Microsoft\WindowsApps')")"""
+        # run_command(app)
+
+
 try:
     run()
 except:

@@ -9,4 +9,4 @@ A simple Python script to keep your Teams and PC active even when you are away f
 **pip install -r requirements.txt**
 
 2. Run `main.py` (recommended).
-3. Run `main_Analog.py` (pyautogui method, works as smooth as butter).
+3. Run `main_Analog.py` (pyautogui method, works smooth as butter).
